@@ -1,0 +1,9 @@
+{
+  "name": "spawn-tag",
+  "version": "1.0.0",
+  "description": "A template tag that safely runs commands for you",
+  "main": "dist/index.js",
+  "repository": "https://github.com/j-f1/spawn-tag",
+  "author": "Jed Fox <git@twopointzero.us>",
+  "license": "MIT"
+}
