@@ -1,4 +1,5 @@
 {
+  "$schema": "http://json.schemastore.org/package.json",
   "name": "spawn-tag",
   "version": "1.0.0",
   "description": "A template tag that safely runs commands for you",
@@ -6,8 +7,14 @@
   "repository": "https://github.com/j-f1/spawn-tag",
   "author": "Jed Fox <git@twopointzero.us>",
   "license": "MIT",
+  "scripts": {
+    "lint": "prettylint \"src/**/*.ts\" \"*.{json,md,yml}\"",
+    "fix": "yarn lint --fix"
+  },
   "devDependencies": {
     "@types/node": "^10.5.4",
+    "prettier": "^1.14.0",
+    "prettylint": "^1.0.0",
     "typescript": "^3.0.1"
   }
 }
