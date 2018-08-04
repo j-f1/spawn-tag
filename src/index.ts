@@ -2,7 +2,7 @@ import { split } from 'shell-split'
 import { spawn as cpSpawn, SpawnOptions } from 'child_process'
 
 interface Options extends SpawnOptions {
-  capture: {
+  capture?: {
     stdout: boolean
     stderr: boolean
   }
@@ -16,8 +16,17 @@ type TemplateTag<T> = (
   ...interpolations: unknown[]
 ) => T
 
-function realSpawn(options?: Options): TemplateTag<void> {
-  return (strings, ...interpolations) => {
+function spawn(options?: Options): TemplateTag<void>
+function spawn(
+  strings: TemplateStringsArray,
+  ...interpolations: unknown[]
+): void
+function spawn(
+  first: Options | null | undefined | TemplateStringsArray,
+  ...rest: unknown[]
+) {
+  let options: Options = {}
+  const tag: TemplateTag<void> = (strings, ...interpolations) => {
     let sep = '%expr%'
     while (strings.find(str => str.includes(sep))) {
       sep += '%'
@@ -38,6 +47,14 @@ function realSpawn(options?: Options): TemplateTag<void> {
       Object.assign({ capture: { stdout: true, stderr: true } }, options),
     )
   }
+
+  if (isStrings(first)) {
+    return tag(first, ...rest)
+  }
+  if (first != null) {
+    options = first
+  }
+  return tag
 }
 
 type Spawn =
@@ -50,19 +67,14 @@ const spawnSilently: Spawn = (
 ) => {
   const opts: Options = { capture: { stdout: false, stderr: false } }
   if (isStrings(first)) {
-    return realSpawn(opts)(first, ...rest)
+    return spawn(opts)(first, ...rest)
   }
-  return realSpawn(Object.assign({}, opts, first))
+  return spawn(Object.assign({}, opts, first))
 }
 
-let spawn = Object.assign<Spawn, { silently: Spawn }>(
-  (first: Options | TemplateStringsArray, ...rest: unknown[]) => {
-    if (isStrings(first)) {
-      return realSpawn()(first, ...rest)
-    }
-    return realSpawn(first)
-  },
-  { silently: spawnSilently },
-)
+Object.assign<Spawn, { silently: Spawn }>(spawn, {
+  silently: spawnSilently,
+})
 
 export default spawn
+export { spawnSilently, spawnSilently as silently }
