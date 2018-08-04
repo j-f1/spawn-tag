@@ -74,3 +74,6 @@ typings/
 
 # Yarn
 yarn.lock
+
+# Build output
+dist

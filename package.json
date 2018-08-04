@@ -8,7 +8,7 @@
   "author": "Jed Fox <git@twopointzero.us>",
   "license": "MIT",
   "scripts": {
-    "lint": "prettylint \"src/**/*.ts\" \"*.{json,md,yml}\"",
+    "lint": "prettylint \"{src,types}/**/*.ts\" \"*.{json,md,yml}\"",
     "fix": "yarn lint --fix"
   },
   "devDependencies": {
@@ -16,5 +16,8 @@
     "prettier": "^1.14.0",
     "prettylint": "^1.0.0",
     "typescript": "^3.0.1"
+  },
+  "dependencies": {
+    "shell-split": "^1.0.0"
   }
 }
