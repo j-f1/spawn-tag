@@ -31,25 +31,25 @@ declare module 'p-event' {
 
   export = pEvent
 
-  function pEvent<T extends any[]>(
-    emitter: pEvent.Emitter<T>,
-    event: 'exit',
+  function pEvent(
+    emitter: pEvent.Emitter,
+    event: 'close',
     options: { multiArgs: true },
-  ): Promise<T>
+  ): Promise<[number, string]>
 
   namespace pEvent {
-    interface Emitter<T extends any[]> {
-      on?: AddRmListenerFn<T>
-      addListener?: AddRmListenerFn<T>
-      addEventListener?: AddRmListenerFn<T>
-      off?: AddRmListenerFn<T>
-      removeListener?: AddRmListenerFn<T>
-      removeEventListener?: AddRmListenerFn<T>
+    interface Emitter {
+      on?: AddRmListenerFn
+      addListener?: AddRmListenerFn
+      addEventListener?: AddRmListenerFn
+      off?: AddRmListenerFn
+      removeListener?: AddRmListenerFn
+      removeEventListener?: AddRmListenerFn
     }
   }
 
-  type AddRmListenerFn<T extends any[]> = (
-    event: 'exit',
-    listener: (...args: T) => void,
+  type AddRmListenerFn = (
+    event: 'close',
+    listener: (code: number, signal: string) => void,
   ) => void
 }

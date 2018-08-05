@@ -76,12 +76,12 @@ export default function tag<T extends Options>(options: T) {
       })
     }
 
-    const onExit = pEvent<[number, string]>(childProcess, 'exit', {
+    // will reject if an `error` event is emitted.
+    const onClose = pEvent(childProcess, 'close', {
       multiArgs: true,
     })
     return Object.assign(
-      onExit.then(arg => {
-        const [code, signal] = arg
+      onClose.then(([code, signal]) => {
         if (code || signal) {
           throw Object.assign(
             new Error(
