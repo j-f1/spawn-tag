@@ -12,12 +12,15 @@
     "fix": "yarn lint --fix"
   },
   "devDependencies": {
+    "@types/cross-spawn": "^6.0.0",
     "@types/node": "^10.5.4",
     "prettier": "^1.14.0",
     "prettylint": "^1.0.0",
     "typescript": "^3.0.1"
   },
   "dependencies": {
+    "cross-spawn": "^6.0.5",
+    "p-event": "^2.1.0",
     "shell-split": "^1.0.0"
   }
 }
