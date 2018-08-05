@@ -1,5 +1,6 @@
 import { split } from 'shell-split'
-import { SpawnOptions } from 'child_process'
+import { SpawnOptions, ChildProcess } from 'child_process'
+
 import crossSpawn = require('cross-spawn')
 import pEvent = require('p-event')
 
@@ -15,15 +16,39 @@ export interface Options extends SpawnOptions {
   }
 }
 
+interface Result {
+  stdout: string | Buffer | null
+  stderr: string | Buffer | null
+}
+
+function attachToStream(
+  capture: Required<Options>['capture'],
+  key: 'stdout' | 'stderr',
+  result: Result,
+  childProcess: ChildProcess,
+) {
+  const opt = capture[key]
+  if (opt != null) {
+    childProcess[key].on('data', (data: Buffer) => {
+      const currentResult = result[key]
+      if (typeof opt === 'string') {
+        result[key] = currentResult + data.toString(opt)
+      } else if (currentResult != null && currentResult instanceof Buffer) {
+        result[key] = Buffer.concat([currentResult, data])
+      } else {
+        throw new Error(
+          `Unexpected combination of encoding (${opt}) and data (${data})`,
+        )
+      }
+    })
+  }
+}
+
 export default function tag<T extends Options>(options: T) {
   const opts: T & Required<Pick<Options, 'capture'>> = Object.assign(
     { capture: { stdout: false, stderr: false } },
     options,
   )
-  type Result = {
-    stdout: string | Buffer | null
-    stderr: string | Buffer | null
-  }
 
   const tag: TemplateTag<Promise<Result>> = (strings, ...interpolations) => {
     let sep = '%expr%'
@@ -57,24 +82,8 @@ export default function tag<T extends Options>(options: T) {
           : null,
     }
 
-    if (opts.capture.stdout != null) {
-      childProcess.stdout.on('data', (data: Buffer) => {
-        if (typeof opts.capture.stdout === 'string') {
-          result.stdout += data.toString(opts.capture.stdout)
-        } else if (result.stdout instanceof Buffer) {
-          result.stdout = Buffer.concat([result.stdout, data])
-        }
-      })
-    }
-    if (opts.capture.stderr != null) {
-      childProcess.stderr.on('data', (data: Buffer) => {
-        if (typeof opts.capture.stderr === 'string') {
-          result.stderr += data.toString(opts.capture.stderr)
-        } else if (result.stderr instanceof Buffer) {
-          result.stderr = Buffer.concat([result.stderr, data])
-        }
-      })
-    }
+    attachToStream(opts.capture, 'stdout', result, childProcess)
+    attachToStream(opts.capture, 'stderr', result, childProcess)
 
     // will reject if an `error` event is emitted.
     const onClose = pEvent(childProcess, 'close', {
