@@ -1,31 +1,30 @@
-import tag, { TemplateTag, Options } from './tag'
+import tag, { Options } from './tag'
 
 const isStrings = (arg: any): arg is TemplateStringsArray =>
   arg && arg.length >= 1 && arg.raw && arg.raw.length >= 1
 
-type Spawn =
-  | ((options: Options) => TemplateTag<void>)
-  | ((...args: [TemplateStringsArray, any[] | undefined]) => void)
-const spawnSilently: Spawn = (
-  first: Options | TemplateStringsArray,
-  ...rest: unknown[]
+const silent: Options = { capture: { stdout: false, stderr: false } }
+const spawnSilently = <T extends Options | TemplateStringsArray>(
+  first: T,
+  ...rest: T extends Options ? [] : unknown[]
 ) => {
-  const opts: Options = { capture: { stdout: false, stderr: false } }
   if (isStrings(first)) {
-    return tag(opts)(first, ...rest)
+    return tag(silent)(first, ...rest)
   }
-  return tag(Object.assign({}, opts, first))
+  const opts = first as Options
+  return tag(Object.assign({}, silent, opts))
 }
 
-const spawn = Object.assign<Spawn, { silently: Spawn }>(
-  (
-    first: Options | null | undefined | TemplateStringsArray,
-    ...rest: unknown[]
+let spawn = Object.assign(
+  <T extends Options | TemplateStringsArray>(
+    first: T,
+    ...rest: T extends Options ? [] : unknown[]
   ) => {
     if (isStrings(first)) {
       return tag({})(first, ...rest)
     }
-    return tag(first || {})
+    const opts = first as Options
+    return tag(opts)
   },
 
   {
