@@ -5,18 +5,7 @@ const isStrings = (arg: any): arg is TemplateStringsArray =>
 
 type Spawn =
   | ((options: Options) => TemplateTag<void>)
-  | ((...args: [TemplateStringsArray, ...unknown[]]) => void)
-
-const spawn: Spawn = (
-  first: Options | null | undefined | TemplateStringsArray,
-  ...rest: unknown[]
-) => {
-  if (isStrings(first)) {
-    return tag({})(first, ...rest)
-  }
-  return tag(first || {})
-}
-
+  | ((...args: [TemplateStringsArray, any[] | undefined]) => void)
 const spawnSilently: Spawn = (
   first: Options | TemplateStringsArray,
   ...rest: unknown[]
@@ -28,9 +17,21 @@ const spawnSilently: Spawn = (
   return tag(Object.assign({}, opts, first))
 }
 
-Object.assign<Spawn, { silently: Spawn }>(spawn, {
-  silently: spawnSilently,
-})
+const spawn = Object.assign<Spawn, { silently: Spawn }>(
+  (
+    first: Options | null | undefined | TemplateStringsArray,
+    ...rest: unknown[]
+  ) => {
+    if (isStrings(first)) {
+      return tag({})(first, ...rest)
+    }
+    return tag(first || {})
+  },
+
+  {
+    silently: spawnSilently,
+  },
+)
 
 export default spawn
 export { spawnSilently, spawnSilently as silently, Options }

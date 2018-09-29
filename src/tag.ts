@@ -16,9 +16,11 @@ export interface Options extends SpawnOptions {
   }
 }
 
-interface Result {
+export interface Result {
   stdout: string | Buffer | null
   stderr: string | Buffer | null
+  code: number
+  signal: string | null
 }
 
 function attachToStream(
@@ -28,7 +30,7 @@ function attachToStream(
   childProcess: ChildProcess,
 ) {
   const opt = capture[key]
-  if (opt != null) {
+  if (opt) {
     childProcess[key].on('data', (data: Buffer) => {
       const currentResult = result[key]
       if (typeof opt === 'string') {
@@ -46,7 +48,7 @@ function attachToStream(
 
 export default function tag<T extends Options>(options: T) {
   const opts: T & Required<Pick<Options, 'capture'>> = Object.assign(
-    { capture: { stdout: false, stderr: false } },
+    { capture: { stdout: 'utf8', stderr: 'utf8' } },
     options,
   )
 
@@ -68,18 +70,18 @@ export default function tag<T extends Options>(options: T) {
     const childProcess = crossSpawn(cmd, argv, opts)
 
     const result: Result = {
-      stdout:
-        opts.capture.stdout != null
-          ? typeof opts.capture.stdout === 'string'
-            ? ''
-            : Buffer.alloc(0)
-          : null,
-      stderr:
-        opts.capture.stderr != null
-          ? typeof opts.capture.stderr === 'string'
-            ? ''
-            : Buffer.alloc(0)
-          : null,
+      stdout: opts.capture.stdout
+        ? typeof opts.capture.stdout === 'string'
+          ? ''
+          : Buffer.alloc(0)
+        : null,
+      stderr: opts.capture.stderr
+        ? typeof opts.capture.stderr === 'string'
+          ? ''
+          : Buffer.alloc(0)
+        : null,
+      code: null!, // Will be filled out when the process exits
+      signal: null,
     }
 
     attachToStream(opts.capture, 'stdout', result, childProcess)
@@ -91,6 +93,8 @@ export default function tag<T extends Options>(options: T) {
     })
     return Object.assign(
       onClose.then(([code, signal]) => {
+        result.code = code
+        result.signal = signal
         if (code || signal) {
           throw Object.assign(
             new Error(
@@ -98,7 +102,7 @@ export default function tag<T extends Options>(options: T) {
                 code ? `code ${code}` : `signal ${signal}`
               }.`,
             ),
-            { code, signal },
+            result,
           )
         }
         return result
