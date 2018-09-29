@@ -19,6 +19,7 @@
     "esModuleInterop": true
   },
   "typeRoots": ["types/", "node_modules/@types"],
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "node_modules/@types/{jest,node}/**/*"],
+  "exclude": ["**/__tests__/**/*"],
   "compileOnSave": true
 }

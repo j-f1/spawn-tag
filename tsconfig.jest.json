@@ -1,0 +1,10 @@
+{
+  "$schema": "http://json.schemastore.org/tsconfig",
+  "extends": "./tsconfig",
+  "compilerOptions": {
+    "declaration": false,
+    "noEmit": true,
+    "module": "commonjs"
+  },
+  "compileOnSave": false
+}
