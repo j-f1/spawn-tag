@@ -72,8 +72,5 @@ typings/
 # Serverless directories
 .serverless
 
-# Yarn
-yarn.lock
-
 # Build output
 dist
