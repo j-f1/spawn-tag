@@ -1,5 +1,6 @@
 # spawn-tag
 
+[![Build status](https://img.shields.io/travis/com/j-f1/spawn-tag.svg?style=flat-square)](https://travis-ci.com/j-f1/spawn-tag)
 [![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 TODO: Put more badges here.
 

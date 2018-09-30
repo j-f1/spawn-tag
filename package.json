@@ -9,12 +9,16 @@
   "license": "MIT",
   "scripts": {
     "prepare": "tsc",
+    "test": "jest",
     "lint": "prettylint \"{src,types}/**/*.ts\" \"*.{json,md,yml}\"",
     "fix": "yarn lint --fix"
   },
   "files": [
     "dist/*"
   ],
+  "engines": {
+    "node": ">=6"
+  },
   "devDependencies": {
     "@types/cross-spawn": "^6.0.0",
     "@types/jest": "^23.3.1",
