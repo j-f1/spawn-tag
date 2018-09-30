@@ -61,6 +61,34 @@ Object {
 }
 `)
   })
+
+  it('handles interpolations adjacent to literal text properly', async () => {
+    expect(await spawn`echo abc${'def'}`).toMatchInlineSnapshot(`
+Object {
+  "code": 0,
+  "signal": null,
+  "stderr": "",
+  "stdout": "abcdef
+",
+}
+`)
+  })
+
+  it('handles `spawn` options correctly', async () => {
+    expect(
+      await spawn({
+        env: { ...process.env, FOO: 'foo' },
+      })`node -e 'console.log(process.env.FOO)'`,
+    ).toMatchInlineSnapshot(`
+Object {
+  "code": 0,
+  "signal": null,
+  "stderr": "",
+  "stdout": "foo
+",
+}
+`)
+  })
 })
 
 describe('The `spawn.silently` tag', () => {
