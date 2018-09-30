@@ -1,0 +1,104 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`The \`spawn.silently\` tag runs \`echo\` without errors 1`] = `
+Object {
+  "code": 0,
+  "signal": null,
+  "stderr": null,
+  "stdout": null,
+}
+`;
+
+exports[`The \`spawn\` tag converts non-string interpolations to strings 1`] = `
+Object {
+  "code": 0,
+  "signal": null,
+  "stderr": "",
+  "stdout": "33
+",
+}
+`;
+
+exports[`The \`spawn\` tag does not quote interpolated options 1`] = `
+Object {
+  "code": 0,
+  "signal": null,
+  "stderr": "",
+  "stdout": "total 0
+-rw-r--r--  1 staff  0 Sep 30 08:04 bar
+-rw-r--r--  1 staff  0 Sep 30 08:04 foo
+",
+}
+`;
+
+exports[`The \`spawn\` tag escapes semicolons 1`] = `
+Object {
+  "code": 0,
+  "signal": null,
+  "stderr": "",
+  "stdout": "Hello!; echo Goodbye!
+",
+}
+`;
+
+exports[`The \`spawn\` tag handles \`spawn\` options correctly 1`] = `
+Object {
+  "code": 0,
+  "signal": null,
+  "stderr": "",
+  "stdout": "foo
+",
+}
+`;
+
+exports[`The \`spawn\` tag handles interpolations adjacent to literal text properly 1`] = `
+Object {
+  "code": 1,
+  "signal": null,
+  "stderr": "cat: illegal option --  
+usage: cat [-benstuv] [file ...]
+",
+  "stdout": "",
+}
+`;
+
+exports[`The \`spawn\` tag handles interpolations adjacent to literal text properly 2`] = `
+Object {
+  "code": 0,
+  "signal": null,
+  "stderr": "",
+  "stdout": "abcdef
+",
+}
+`;
+
+exports[`The \`spawn\` tag handles interpolations with spaces properly 1`] = `
+Object {
+  "code": 0,
+  "signal": null,
+  "stderr": "",
+  "stdout": "Hello, world
+",
+}
+`;
+
+exports[`The \`spawn\` tag runs \`echo\` without errors 1`] = `
+Object {
+  "code": 0,
+  "signal": null,
+  "stderr": "",
+  "stdout": "hello
+",
+}
+`;
+
+exports[`The \`spawn\` tag runs \`ls\` properly 1`] = `
+Object {
+  "code": 0,
+  "signal": null,
+  "stderr": "",
+  "stdout": "bar
+foo
+",
+}
+`;
