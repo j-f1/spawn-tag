@@ -26,7 +26,7 @@ parsing.
 Although the method used in this module should be secure, please email me
 (address is in my profile) or contact me via Keybase (I’m `j_f`) if you find a
 security issue. Please **do not open an issue** as this would reveal the
-security issue I can implement and release a fix.
+security issue before I can release a fix.
 
 ## Install
 
