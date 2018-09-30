@@ -1,9 +1,14 @@
 import spawn from '..'
 
+import { join, relative } from 'path'
+
 ///<reference types="jest" />
 
+const fixturePath = (...args: string[]) =>
+  relative(process.cwd(), join(__dirname, 'fixtures', ...args))
+
 describe('The `spawn` tag', () => {
-  it('runs `ls` without errors', async () => {
+  it('runs `echo` without errors', async () => {
     expect(await spawn`echo hello`).toMatchInlineSnapshot(`
 Object {
   "code": 0,
@@ -14,7 +19,8 @@ Object {
 }
 `)
   })
-  it('handles interpolations properly', async () => {
+
+  it('handles interpolations with spaces properly', async () => {
     expect(await spawn`echo ${'Hello, world'}`).toMatchInlineSnapshot(`
 Object {
   "code": 0,
@@ -24,6 +30,9 @@ Object {
 ",
 }
 `)
+  })
+
+  it('converts non-string interpolations to strings', async () => {
     expect(await spawn`echo ${33}`).toMatchInlineSnapshot(`
 Object {
   "code": 0,
@@ -33,6 +42,9 @@ Object {
 ",
 }
 `)
+  })
+
+  it('escapes semicolons', async () => {
     expect(await spawn`echo ${'Hello!; echo Goodbye!'}`).toMatchInlineSnapshot(`
 Object {
   "code": 0,
@@ -42,22 +54,48 @@ Object {
 ",
 }
 `)
-    expect(await spawn`echo ${'-e'} ${'a\\nb'}`).toMatchInlineSnapshot(`
+  })
+
+  it('runs `ls` properly', async () => {
+    expect(await spawn`ls ${fixturePath('dir')}`).toMatchInlineSnapshot(`
 Object {
   "code": 0,
   "signal": null,
   "stderr": "",
-  "stdout": "-e a\\\\nb
+  "stdout": "bar
+foo
 ",
 }
 `)
-    expect(await spawn`echo ${'-e "a\\nb"'}`).toMatchInlineSnapshot(`
+  })
+
+  it('does not quote interpolated options', async () => {
+    expect(await spawn`ls ${'-g'} ${fixturePath('dir')}`)
+      .toMatchInlineSnapshot(`
 Object {
   "code": 0,
   "signal": null,
   "stderr": "",
-  "stdout": "-e \\"a\\\\nb\\"
+  "stdout": "total 0
+-rw-r--r--  1 staff  0 Sep 30 08:04 bar
+-rw-r--r--  1 staff  0 Sep 30 08:04 foo
 ",
+}
+`)
+  })
+
+  it('does ???', async () => {
+    const promise = spawn`cat ${'- ' + fixturePath('file')}`
+    promise.childProcess.stdin.end('hello')
+    expect(promise.catch(arg => JSON.parse(JSON.stringify(arg)))).resolves
+      .toMatchInlineSnapshot(`
+Object {
+  "code": 1,
+  "signal": null,
+  "stderr": "cat: illegal option --  
+usage: cat [-benstuv] [file ...]
+",
+  "stdout": "",
 }
 `)
   })
@@ -92,7 +130,7 @@ Object {
 })
 
 describe('The `spawn.silently` tag', () => {
-  it('runs `ls` without errors', async () => {
+  it('runs `echo` without errors', async () => {
     expect(await spawn.silently`echo hello`).toMatchInlineSnapshot(`
 Object {
   "code": 0,
