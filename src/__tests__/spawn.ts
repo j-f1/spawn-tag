@@ -1,4 +1,6 @@
-import spawn from '..'
+import spawn, { Options } from '..'
+
+import { TemplateTag } from '../tag'
 
 import { join, relative } from 'path'
 
@@ -7,30 +9,28 @@ import { join, relative } from 'path'
 const fixturePath = (...args: string[]) =>
   relative(process.cwd(), join(__dirname, 'fixtures', ...args))
 
+const t = (name: string, opts?: Options): TemplateTag<void> => (
+  strings,
+  ...args
+) => {
+  it(name, async () => {
+    const callee = opts ? spawn(opts) : spawn
+    expect(await callee(strings, ...args)).toMatchSnapshot()
+  })
+}
+
 describe('The `spawn` tag', () => {
-  it('runs `echo` without errors', async () => {
-    expect(await spawn`echo hello`).toMatchSnapshot()
-  })
+  t('runs `echo` without errors')`echo hello`
 
-  it('handles interpolations with spaces properly', async () => {
-    expect(await spawn`echo ${'Hello, world'}`).toMatchSnapshot()
-  })
+  t('handles interpolations with spaces properly')`echo ${'Hello, world'}`
 
-  it('converts non-string interpolations to strings', async () => {
-    expect(await spawn`echo ${33}`).toMatchSnapshot()
-  })
+  t('converts non-string interpolations to strings')`echo ${33}`
 
-  it('escapes semicolons', async () => {
-    expect(await spawn`echo ${'Hello!; echo Goodbye!'}`).toMatchSnapshot()
-  })
+  t('escapes semicolons')`echo ${'Hello!; echo Goodbye!'}`
 
-  it('runs `ls` properly', async () => {
-    expect(await spawn`ls ${fixturePath('dir')}`).toMatchSnapshot()
-  })
+  t('runs `ls` properly')`ls ${fixturePath('dir')}`
 
-  it('does not quote interpolated options', async () => {
-    expect(await spawn`ls ${'-g'} ${fixturePath('dir')}`).toMatchSnapshot()
-  })
+  t('does not quote interpolated options')`ls ${'-g'} ${fixturePath('dir')}`
 
   it('does ???', async () => {
     const promise = spawn`cat ${'- ' + fixturePath('file')}`
@@ -40,17 +40,13 @@ describe('The `spawn` tag', () => {
     ).resolves.toMatchSnapshot()
   })
 
-  it('handles interpolations adjacent to literal text properly', async () => {
-    expect(await spawn`echo abc${'def'}`).toMatchSnapshot()
-  })
+  t(
+    'handles interpolations adjacent to literal text properly',
+  )`echo abc${'def'}`
 
-  it('handles `spawn` options correctly', async () => {
-    expect(
-      await spawn({
-        env: { ...process.env, FOO: 'foo' },
-      })`node -e 'console.log(process.env.FOO)'`,
-    ).toMatchSnapshot()
-  })
+  t('handles `spawn` options correctly', {
+    env: { ...process.env, FOO: 'foo' },
+  })`node -e 'console.log(process.env.FOO)'`
 })
 
 describe('The `spawn.silently` tag', () => {
