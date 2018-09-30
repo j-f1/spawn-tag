@@ -3,7 +3,7 @@ module.exports = {
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
   },
-  testRegex: '(?<!dist)(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$',
+  testRegex: '(?<!dist)(/__tests__/.*|(\\.|/)(test|spec))(?<!.d)\\.tsx?$',
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   globals: {
     'ts-jest': {
