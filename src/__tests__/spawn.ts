@@ -32,12 +32,12 @@ describe('The `spawn` tag', () => {
 
   t('does not quote interpolated options')`ls ${'-g'} ${fixturePath('dir')}`
 
-  it('does ???', async () => {
+  it('passes space-delimited text as one option', async () => {
     const promise = spawn`cat ${'- ' + fixturePath('file')}`
     promise.childProcess.stdin.end('hello')
     expect(
-      promise.catch(arg => JSON.parse(JSON.stringify(arg))),
-    ).resolves.toMatchSnapshot()
+      await promise.catch(arg => JSON.parse(JSON.stringify(arg))),
+    ).toMatchSnapshot()
   })
 
   t(
