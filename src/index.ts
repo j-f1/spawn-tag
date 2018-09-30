@@ -1,7 +1,8 @@
-import tag, { Options } from './tag'
+import tag, { TemplateTag, Options, PromiseLike } from './tag'
 
 const isStrings = (arg: any): arg is TemplateStringsArray =>
   arg && arg.length >= 1 && arg.raw && arg.raw.length >= 1
+const isOptions = (arg: any): arg is Options => !isStrings(arg)
 
 const silent: Options = { capture: { stdout: false, stderr: false } }
 const spawnSilently = <T extends Options | TemplateStringsArray>(
@@ -19,12 +20,16 @@ let spawn = Object.assign(
   <T extends Options | TemplateStringsArray>(
     first: T,
     ...rest: T extends Options ? [] : unknown[]
-  ) => {
-    if (isStrings(first)) {
-      return tag({})(first, ...rest)
+  ): T extends Options ? TemplateTag<PromiseLike> : PromiseLike => {
+    if (isOptions(first)) {
+      return tag(first) as T extends Options
+        ? TemplateTag<PromiseLike>
+        : PromiseLike
     }
-    const opts = first as Options
-    return tag(opts)
+    const strings = first as TemplateStringsArray
+    return tag({})(strings, ...rest) as T extends Options
+      ? TemplateTag<PromiseLike>
+      : PromiseLike
   },
 
   {
@@ -33,4 +38,4 @@ let spawn = Object.assign(
 )
 
 export default spawn
-export { spawnSilently, spawnSilently as silently, Options }
+export { spawn, spawnSilently, spawnSilently as silently, Options }

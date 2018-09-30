@@ -23,6 +23,10 @@ export interface Result {
   signal: string | null
 }
 
+export interface PromiseLike extends Promise<Result> {
+  childProcess: ChildProcess
+}
+
 function attachToStream(
   capture: Required<Options>['capture'],
   key: 'stdout' | 'stderr',
@@ -52,7 +56,7 @@ export default function tag<T extends Options>(options: T) {
     options,
   )
 
-  const tag: TemplateTag<Promise<Result>> = (strings, ...interpolations) => {
+  const tag: TemplateTag<PromiseLike> = (strings, ...interpolations) => {
     let sep = '%expr%'
     while (strings.find(str => str.includes(sep))) {
       sep += '%'
