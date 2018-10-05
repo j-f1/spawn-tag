@@ -1,8 +1,12 @@
 # spawn-tag
 
 [![Build status](https://img.shields.io/travis/com/j-f1/spawn-tag.svg?style=flat-square)](https://travis-ci.com/j-f1/spawn-tag)
+[![MIT licensed](https://img.shields.io/github/license/j-f1/spawn-tag.svg?style=flat-square)](https://github.com/j-f1/spawn-tag/blob/master/LICENSE)
+[![view on npm](https://img.shields.io/npm/v/spawn-tag.svg?style=flat-square)](https://npmjs.com/package/spawn-tag)
+![download count](https://img.shields.io/npm/dt/spawn-tag.svg?style=flat-square)
+![node](https://img.shields.io/node/v/spawn-tag.svg?style=flat-square)
+![npm type definitions](https://img.shields.io/npm/types/spawn-tag.svg?style=flat-square)
 [![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
-TODO: Put more badges here.
 
 > A template tag that safely runs commands for you
 
